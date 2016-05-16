@@ -465,6 +465,7 @@ module Omnibus
         <<-EOH.split.join(" ").squeeze(" ").strip
         light.exe
           -nologo
+          -sval
           -ext WixUIExtension
           -ext WixBalExtension
           #{wix_extension_switches(wix_light_extensions)}
@@ -477,6 +478,7 @@ module Omnibus
         <<-EOH.split.join(" ").squeeze(" ").strip
           light.exe
             -nologo
+            -sval
             -ext WixUIExtension
             #{wix_extension_switches(wix_light_extensions)}
             -cultures:en-us
