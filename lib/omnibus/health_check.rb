@@ -448,10 +448,28 @@ module Omnibus
         safe ||= true if reg.match(current_library)
       end
 
+      case Ohai["platform"]
+      when "mac_os_x"
+          # Relative executable paths paths are fine
+          if linked =~ %r{@executable_path/../lib}
+            safe ||= true
+          end
+
+          # If the library has a link with a hardcoded absolute path, then fail this dependency
+          if linked =~ Regexp.new(project.install_dir)
+            safe ||= false
+          end
+      else
+        # Only allow libraries which are imported via the project's install dir
+        if linked !~ Regexp.new(project.install_dir)
+          safe ||= false
+        end
+      end
+
       log.debug(log_key) { "  --> Dependency: #{name}" }
       log.debug(log_key) { "  --> Provided by: #{linked}" }
 
-      if !safe && linked !~ Regexp.new(project.install_dir)
+      if !safe
         log.debug(log_key) { "    -> FAILED: #{current_library} has unsafe dependencies" }
         bad_libs[current_library] ||= {}
         bad_libs[current_library][name] ||= {}
