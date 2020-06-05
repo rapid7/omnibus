@@ -448,8 +448,9 @@ module Omnibus
         safe ||= true if reg.match(current_library)
       end
 
-      case Ohai["platform"]
-      when "mac_os_x"
+      if project.require_relative_links
+        case Ohai["platform"]
+        when "mac_os_x"
           # Relative executable paths paths are fine
           if linked =~ %r{@executable_path/../lib}
             safe ||= true
@@ -459,6 +460,9 @@ module Omnibus
           if linked =~ Regexp.new(project.install_dir)
             safe ||= false
           end
+        else
+          raise HealthCheckFailed, "Platform #{Ohai["platform"]} does not support require_relative_links healthchecks"
+        end
       else
         # Only allow libraries which are imported via the project's install dir
         if linked !~ Regexp.new(project.install_dir)

@@ -422,6 +422,25 @@ module Omnibus
     expose :build_iteration
 
     #
+    # Signal that we're building software with relative links
+    #
+    # @example
+    #   fast_msi true
+    #
+    # @param [TrueClass, FalseClass] value
+    #   whether the healthcheck enforces relative links
+    #
+    # @return [TrueClass, FalseClass]
+    #   whether the healthcheck enforces relative links
+    def require_relative_links(val = false)
+      unless val.is_a?(TrueClass) || val.is_a?(FalseClass)
+        raise InvalidValue.new(:require_relative_links, "be TrueClass or FalseClass")
+      end
+      @require_relative_links ||= val
+    end
+    expose :require_relative_links
+
+    #
     # Add or override a customization for the packager with the given +id+. When
     # given multiple blocks with the same +id+, they are evaluated _in order_,
     # so the last block evaluated will take precedence over the previous ones.
