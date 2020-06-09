@@ -448,10 +448,26 @@ module Omnibus
         safe ||= true if reg.match(current_library)
       end
 
+      if project.require_portable_links
+        case Ohai["platform"]
+        when "mac_os_x"
+          if linked =~ %r{@executable_path/../lib}
+            safe ||= true
+          end
+        else
+          raise HealthCheckFailed, "Platform #{Ohai["platform"]} does not support require_portable_links healthchecks"
+        end
+      else
+        # Only allow libraries which are imported via the project's install dir
+        if linked =~ Regexp.new(project.install_dir)
+          safe ||= true
+        end
+      end
+
       log.debug(log_key) { "  --> Dependency: #{name}" }
       log.debug(log_key) { "  --> Provided by: #{linked}" }
 
-      if !safe && linked !~ Regexp.new(project.install_dir)
+      if !safe
         log.debug(log_key) { "    -> FAILED: #{current_library} has unsafe dependencies" }
         bad_libs[current_library] ||= {}
         bad_libs[current_library][name] ||= {}
