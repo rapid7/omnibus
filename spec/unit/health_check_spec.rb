@@ -7,9 +7,12 @@ module Omnibus
       double(Project,
         name: "chefdk",
         install_dir: "/opt/chefdk",
+        require_portable_links: require_portable_links,
         library: double(Library,
           components: []))
     end
+
+    let(:require_portable_links) { false }
 
     def mkdump(base, size, x64 = false)
       dump = double(PEdump)
@@ -23,6 +26,111 @@ module Omnibus
     end
 
     subject { described_class.new(project) }
+
+    context "on mac_os_x" do
+      before do
+        stub_ohai(platform: "mac_os_x", version: "10.13")
+      end
+
+      let(:absolute_links) do
+        double("Mixlib::Shellout",
+          stdout: <<~EOH
+            /opt/chefdk/embedded/bin/ruby:
+              /System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 57337.60.9)
+              /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1259.32.0)
+              /opt/chefdk/embedded/lib/libruby.2.6.dylib (compatibility version 2.6.0, current version 2.6.6)
+              /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1226.10.1)
+              /opt/chefdk/embedded/lib/libjemalloc.2.dylib (compatibility version 0.0.0, current version 0.0.0)
+              /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0
+          EOH
+        )
+      end
+
+      let(:portable_links) do
+        double("Mixlib::Shellout",
+          stdout: <<~EOH
+          /opt/chefdk/embedded/bin/ruby:
+            /System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 57337.60.9)
+            /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1259.32.0)
+            @executable_path/../lib/libruby.2.6.dylib (compatibility version 2.6.0, current version 2.6.6)
+            /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1226.10.1)
+            @executable_path/../lib/libjemalloc.2.dylib (compatibility version 0.0.0, current version 0.0.0)
+            /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0)
+          EOH
+        )
+      end
+
+      let(:unknown_absolute_link) do
+        double("Mixlib::Shellout",
+          stdout: <<~EOH
+          /opt/chefdk/embedded/bin/ruby:
+            /System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 57337.60.9)
+            /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1259.32.0)
+            /opt/chefdk/embedded/lib/libruby.2.6.dylib (compatibility version 2.6.0, current version 2.6.6)
+            /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1226.10.1)
+            /opt/chefdk/embedded/lib/libjemalloc.2.dylib (compatibility version 0.0.0, current version 0.0.0)
+            /usr/lib/libobjc.A.dylib (compatibility version 1.0.0, current version 228.0.0
+            /foo/bar.dylib (compatibility version 1.0.0, current version 228.0.0)
+          EOH
+        )
+      end
+
+      context "when require_portable_links is true" do
+        let(:require_portable_links) { true }
+
+        it "raises an exception when there are absolute links" do
+          allow(subject).to receive(:shellout)
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+            .and_return(absolute_links)
+
+          expect { subject.run! }.to raise_error(HealthCheckFailed)
+        end
+
+        it "does not raise an exception when links are portable" do
+          allow(subject).to receive(:shellout)
+          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+          .and_return(portable_links)
+
+          expect { subject.run! }.to_not raise_error
+        end
+
+        it "raises an exception when there are unknown absolute links" do
+          allow(subject).to receive(:shellout)
+          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+          .and_return(unknown_absolute_link)
+
+          expect { subject.run! }.to raise_error(HealthCheckFailed)
+        end
+      end
+
+      context "when require_portable_links is false" do
+        let(:require_portable_links) { false }
+
+        it "does not raise an exception when there are absolute links" do
+          allow(subject).to receive(:shellout)
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+            .and_return(absolute_links)
+
+          expect { subject.run! }.to_not raise_error
+        end
+
+        it "raises an exception when links are portable" do
+          allow(subject).to receive(:shellout)
+          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+          .and_return(portable_links)
+
+          expect { subject.run! }.to raise_error(HealthCheckFailed)
+        end
+
+        it "raises an exception when there are unknown absolute links" do
+          allow(subject).to receive(:shellout)
+          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+          .and_return(unknown_absolute_link)
+
+          expect { subject.run! }.to raise_error(HealthCheckFailed)
+        end
+      end
+    end
 
     context "on windows" do
       before do
