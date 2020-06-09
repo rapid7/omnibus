@@ -31,6 +31,7 @@ module Omnibus
     it_behaves_like "a cleanroom setter", :conflict, %{conflict 'puppet'}
     it_behaves_like "a cleanroom setter", :build_version, %{build_version '1.2.3'}
     it_behaves_like "a cleanroom setter", :build_iteration, %{build_iteration 1}
+    it_behaves_like "a cleanroom setter", :require_portable_links, %{require_portable_links true}
     it_behaves_like "a cleanroom setter", :package_user, %{package_user 'chef'}
     it_behaves_like "a cleanroom setter", :package_group, %{package_group 'chef'}
     it_behaves_like "a cleanroom setter", :override, %{override :chefdk, source: 'foo.com'}
@@ -72,6 +73,10 @@ module Omnibus
 
       it "returns a build iteration" do
         expect(subject.build_iteration).to eq(1)
+      end
+
+      it "returns a require_portable_links flag" do
+        expect(subject.require_portable_links).to eq(false)
       end
 
       it "returns an array of files and dirs" do
@@ -240,6 +245,19 @@ module Omnibus
         it "returns a generic iteration" do
           expect(subject.build_iteration).to eq(1)
         end
+      end
+    end
+
+    describe "#require_portable_links" do
+      it "requires the value to be a TrueClass or a FalseClass" do
+        expect do
+          subject.require_portable_links(Object.new)
+        end.to raise_error(InvalidValue)
+      end
+
+      it "returns the given value" do
+        subject.require_portable_links(true)
+        expect(subject.require_portable_links).to be_truthy
       end
     end
 

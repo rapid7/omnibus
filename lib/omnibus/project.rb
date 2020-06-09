@@ -422,7 +422,7 @@ module Omnibus
     expose :build_iteration
 
     #
-    # Signal that we're building software with relative links
+    # Signal that we're building software with portable links
     #
     # @example
     #   fast_msi true
@@ -431,14 +431,14 @@ module Omnibus
     #   whether the healthcheck enforces relative links
     #
     # @return [TrueClass, FalseClass]
-    #   whether the healthcheck enforces relative links
-    def require_relative_links(val = false)
+    #   whether the healthcheck enforces portable links
+    def require_portable_links(val = false)
       unless val.is_a?(TrueClass) || val.is_a?(FalseClass)
-        raise InvalidValue.new(:require_relative_links, "be TrueClass or FalseClass")
+        raise InvalidValue.new(:require_portable_links, "be TrueClass or FalseClass")
       end
-      @require_relative_links ||= val
+      @require_portable_links ||= val
     end
-    expose :require_relative_links
+    expose :require_portable_links
 
     #
     # Add or override a customization for the packager with the given +id+. When
