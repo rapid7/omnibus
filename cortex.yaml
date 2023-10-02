@@ -1,0 +1,16 @@
+---
+info:
+  title: Omnibus
+  description: Easily create full-stack installers for your project across a variety
+    of platforms.
+  x-cortex-git:
+    github:
+      alias: r7org
+      repository: rapid7/omnibus
+  x-cortex-tag: omnibus
+  x-cortex-type: service
+  x-cortex-domain-parents:
+  - tag: metasploit
+openapi: 3.0.1
+servers:
+- url: "/"
