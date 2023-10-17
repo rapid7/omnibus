@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2018 Chef Software, Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #
 
 require "singleton" unless defined?(Singleton)
+require "omnibus/sugarable" unless defined?(Sugarable)
 
 module Omnibus
   class Config
@@ -22,6 +23,7 @@ module Omnibus
     include NullArgumentable
     include Singleton
     include Util
+    include Sugarable
 
     class << self
       #
@@ -598,6 +600,18 @@ module Omnibus
     #
     # @return [true, false]
     default(:fatal_transitive_dependency_licensing_warnings, false)
+
+    # Fail the build when health check does not succeed. This may only be set to false
+    # for very specific use-cases in the omnibus project. e.g. creating a wrapper installer
+    #
+    # @return [true, false]
+    default(:health_check, true)
+
+    # Use the internal_source URL when fetching software dependencies. e.g. when creating an
+    # omnibus package using artifactory as the source url.
+    #
+    # @return [true, false]
+    default(:use_internal_sources, false)
 
     # --------------------------------------------------
     # @!endgroup

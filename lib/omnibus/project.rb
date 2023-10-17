@@ -179,7 +179,7 @@ module Omnibus
       if null?(val)
         @install_dir || raise(MissingRequiredAttribute.new(self, :install_dir, "/opt/chef"))
       else
-        @install_dir = val.tr('\\', "/").squeeze("/").chomp("/")
+        @install_dir = val.tr('\\', "/").squeeze("/").chomp("/") # rubocop:disable Style/StringLiterals
       end
     end
     expose :install_dir
@@ -1081,7 +1081,10 @@ module Omnibus
     end
 
     def download
-      ThreadPool.new(Config.workers) do |pool|
+      # Setting abort_on_exception to false because it was causing
+      # errors by shutting down the main thread when encountering a cache miss
+      # in S3 and falling back to the internal source repo
+      ThreadPool.new(Config.workers, false) do |pool|
         softwares.each do |software|
           pool.schedule { software.fetch }
         end

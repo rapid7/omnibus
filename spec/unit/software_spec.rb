@@ -16,10 +16,18 @@ module Omnibus
       }
     end
 
+    let(:internal_source) do
+      {
+        url: "http://internal.com/",
+        md5: "efgh5678",
+      }
+    end
+
     let(:rel_path) { "software" }
 
     subject do
       local_source = source
+      local_internal_source = internal_source
       local_rel_path = rel_path
 
       described_class.new(project).evaluate do
@@ -27,6 +35,7 @@ module Omnibus
         default_version "1.2.3"
 
         source local_source
+        internal_source local_internal_source
         relative_path local_rel_path
       end
     end
@@ -239,7 +248,7 @@ module Omnibus
             "CXXFLAGS"  => "-I/opt/project/embedded/include -O3 -D_FORTIFY_SOURCE=2 -fstack-protector",
             "CPPFLAGS"  => "-I/opt/project/embedded/include -O3 -D_FORTIFY_SOURCE=2 -fstack-protector",
             "CXX" => "clang++",
-            "LDFLAGS" => "-L/opt/project/embedded/lib",
+            "LDFLAGS" => "-L/opt/project/embedded/lib -Wl,-rpath,/opt/project/embedded/lib",
             "LD_RUN_PATH" => "/opt/project/embedded/lib",
             "PKG_CONFIG_PATH" => "/opt/project/embedded/lib/pkgconfig",
             "OMNIBUS_INSTALL_DIR" => "/opt/project"
@@ -543,7 +552,7 @@ module Omnibus
 
       it "fetches from a fully expanded git path" do
         expect(subject.source).to eq(git: "https://github.com/chef/ohai.git")
-        expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", git: "https://github.com/chef/ohai.git").and_return("1.2.8")
+        expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", { git: "https://github.com/chef/ohai.git" } ).and_return("1.2.8")
         subject.send(:fetcher)
       end
 
@@ -552,7 +561,7 @@ module Omnibus
 
         it "fetches from the override path" do
           expect(subject.source).to eq(git: "https://blah.com/git.git")
-          expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", git: "https://blah.com/git.git").and_return("1.2.8")
+          expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", { git: "https://blah.com/git.git" } ).and_return("1.2.8")
           subject.send(:fetcher)
         end
       end
@@ -562,7 +571,7 @@ module Omnibus
 
         it "fetches from the override path" do
           expect(subject.source).to eq(git: "https://github.com/a/b.git")
-          expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", git: "https://github.com/a/b.git").and_return("1.2.8")
+          expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", { git: "https://github.com/a/b.git" } ).and_return("1.2.8")
           subject.send(:fetcher)
         end
       end
@@ -577,7 +586,7 @@ module Omnibus
 
       it "fetches from the git spec" do
         expect(subject.source).to eq(git: "https://blah.com/git.git")
-        expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", git: "https://blah.com/git.git").and_return("1.2.8")
+        expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", { git: "https://blah.com/git.git" } ).and_return("1.2.8")
         subject.send(:fetcher)
       end
 
@@ -586,9 +595,17 @@ module Omnibus
 
         it "fetches from the override path" do
           expect(subject.source).to eq(git: "https://github.com/a/b.git")
-          expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", git: "https://github.com/a/b.git").and_return("1.2.8")
+          expect(Omnibus::Fetcher).to receive(:resolve_version).with("1.2.3", { git: "https://github.com/a/b.git" } ).and_return("1.2.8")
           subject.send(:fetcher)
         end
+      end
+    end
+
+    context "when software internal_source is given" do
+      before { Omnibus::Config.use_internal_sources(true) }
+
+      it "sets the source with internal: true" do
+        expect(subject.source).to eq(url: "http://internal.com/", md5: "efgh5678", internal: true)
       end
     end
 

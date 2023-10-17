@@ -1,19 +1,78 @@
 <!-- usage documentation: http://expeditor-docs.es.chef.io/configuration/changelog/ -->
 
-<!-- latest_release 8.2.4 -->
-## [8.2.4](https://github.com/chef/omnibus/tree/8.2.4) (2021-10-20)
+<!-- latest_release 9.0.23 -->
+## [9.0.23](https://github.com/chef/omnibus/tree/9.0.23) (2023-09-22)
 
 #### Merged Pull Requests
-- Revert &quot;Fix mac_x-10 failure for chef-workstation&quot; [#1042](https://github.com/chef/omnibus/pull/1042) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- CHEF-5815: Update signing of all msi packages with new cli tool - `smctl` [#1128](https://github.com/chef/omnibus/pull/1128) ([ahasunos](https://github.com/ahasunos))
 <!-- latest_release -->
-<!-- release_rollup since=8.2.2 -->
+<!-- release_rollup since=9.0.22 -->
 ### Changes not yet released to rubygems.org
 
 #### Merged Pull Requests
-- Revert &quot;Fix mac_x-10 failure for chef-workstation&quot; [#1042](https://github.com/chef/omnibus/pull/1042) ([jeremiahsnapp](https://github.com/jeremiahsnapp)) <!-- 8.2.4 -->
-- Whitelist libbrotlidec for curl builds on macOS [#1041](https://github.com/chef/omnibus/pull/1041) ([skeshari12](https://github.com/skeshari12)) <!-- 8.2.3 -->
+- CHEF-5815: Update signing of all msi packages with new cli tool - `smctl` [#1128](https://github.com/chef/omnibus/pull/1128) ([ahasunos](https://github.com/ahasunos)) <!-- 9.0.23 -->
 <!-- release_rollup -->
 <!-- latest_stable_release -->
+## [9.0.22](https://github.com/chef/omnibus/tree/9.0.22) (2023-08-18)
+
+#### Merged Pull Requests
+- omnibus/cli: Exit with non-zero code on failure [#822](https://github.com/chef/omnibus/pull/822) ([legal90](https://github.com/legal90))
+- Skip erroneous package signing arg for el9 [#1109](https://github.com/chef/omnibus/pull/1109) ([vkarve-chef](https://github.com/vkarve-chef))
+- Fix Ruby 3.1 deprecation warning with ERB.new [#1108](https://github.com/chef/omnibus/pull/1108) ([stanhu](https://github.com/stanhu))
+- Update gpg_name to fix RockyLinux rpm signing issue [#1118](https://github.com/chef/omnibus/pull/1118) ([poorndm](https://github.com/poorndm))
+- Update metadata with rocky platform [#1125](https://github.com/chef/omnibus/pull/1125) ([poorndm](https://github.com/poorndm))
+<!-- latest_stable_release -->
+
+## [9.0.17](https://github.com/chef/omnibus/tree/9.0.17) (2023-02-20)
+
+#### Merged Pull Requests
+- Remove authorization from version manifest hash [#1094](https://github.com/chef/omnibus/pull/1094) ([gcs-devel](https://github.com/gcs-devel))
+- Update PULL_REQUEST_TEMPLATE.md [#1097](https://github.com/chef/omnibus/pull/1097) ([gcs-devel](https://github.com/gcs-devel))
+- BS-147 Adding build metadata to omnibus version manifest [#1103](https://github.com/chef/omnibus/pull/1103) ([justingruber](https://github.com/justingruber))
+- retry download without s3 cache flag if cache miss [#1104](https://github.com/chef/omnibus/pull/1104) ([justingruber](https://github.com/justingruber))
+- adding this lib as a safe dependency to solve the error on an aix build [#1105](https://github.com/chef/omnibus/pull/1105) ([sean-simmons-progress](https://github.com/sean-simmons-progress))
+
+## [9.0.12](https://github.com/chef/omnibus/tree/9.0.12) (2022-11-17)
+
+#### Merged Pull Requests
+- Update ohai Dependency  [#1092](https://github.com/chef/omnibus/pull/1092) ([poorndm](https://github.com/poorndm))
+
+## [9.0.11](https://github.com/chef/omnibus/tree/9.0.11) (2022-11-15)
+
+#### Merged Pull Requests
+- Add config flag to toggle health-check [#1086](https://github.com/chef/omnibus/pull/1086) ([vkarve-chef](https://github.com/vkarve-chef))
+- Fix failing s3 accelerate test with a version pin [#1088](https://github.com/chef/omnibus/pull/1088) ([gscho](https://github.com/gscho))
+- BS-94/use internal sources [#1087](https://github.com/chef/omnibus/pull/1087) ([gscho](https://github.com/gscho))
+
+## [9.0.8](https://github.com/chef/omnibus/tree/9.0.8) (2022-10-20)
+
+#### Merged Pull Requests
+- Whitelist files for Chef Infra Client builds [#1064](https://github.com/chef/omnibus/pull/1064) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- Add -rpath to LDFLAGS for FreeBSD [#1067](https://github.com/chef/omnibus/pull/1067) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- Replace BSD tar with GNU tar on Windows [#1065](https://github.com/chef/omnibus/pull/1065) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- IPACK-204 [#1069](https://github.com/chef/omnibus/pull/1069) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- [IPACK-200]: explicitly delegate keyword arguments [#1068](https://github.com/chef/omnibus/pull/1068) ([kanad-progress](https://github.com/kanad-progress))
+- Replace dependency on nokogiri with rexml [#1070](https://github.com/chef/omnibus/pull/1070) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- Whitelist liblzma [#1076](https://github.com/chef/omnibus/pull/1076) ([poorndm](https://github.com/poorndm))
+- Revert the changes - liblzma [#1077](https://github.com/chef/omnibus/pull/1077) ([poorndm](https://github.com/poorndm))
+- Updated regex to match exactly 10, and 10.x [#1078](https://github.com/chef/omnibus/pull/1078) ([kanad-progress](https://github.com/kanad-progress))
+- Add solaris basic os libs to acceptlist, currently called whitelist. [#1082](https://github.com/chef/omnibus/pull/1082) ([marcparadise](https://github.com/marcparadise))
+- INFC-268 fix Solaris build [#1083](https://github.com/chef/omnibus/pull/1083) ([tpowell-progress](https://github.com/tpowell-progress))
+
+## [8.3.2](https://github.com/chef/omnibus/tree/8.3.2) (2022-02-15)
+
+#### Merged Pull Requests
+- Whitelist libbrotlidec for curl builds on macOS [#1041](https://github.com/chef/omnibus/pull/1041) ([skeshari12](https://github.com/skeshari12))
+- Revert &quot;Fix mac_x-10 failure for chef-workstation&quot; [#1042](https://github.com/chef/omnibus/pull/1042) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- Make the omnibus config sugarable [#1045](https://github.com/chef/omnibus/pull/1045) ([lamont-granquist](https://github.com/lamont-granquist))
+- Allow ohai versions &gt; 17 to be used [#1040](https://github.com/chef/omnibus/pull/1040) ([balasankarc](https://github.com/balasankarc))
+- Don&#39;t generate build-id files in RPM packages [#1050](https://github.com/chef/omnibus/pull/1050) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+- Avoid double logging removal of non-mach-o libs [#988](https://github.com/chef/omnibus/pull/988) ([tas50](https://github.com/tas50))
+- fixed typo in referenced argument name [#1054](https://github.com/chef/omnibus/pull/1054) ([vkarve-chef](https://github.com/vkarve-chef))
+- Better healthcheck correctness [#1056](https://github.com/chef/omnibus/pull/1056) ([lamont-granquist](https://github.com/lamont-granquist))
+- Fix omnibus healthcheck spinning on chef-server builds  [#1060](https://github.com/chef/omnibus/pull/1060) ([lamont-granquist](https://github.com/lamont-granquist))
+- Whitelist files for `make` on AIX [#1062](https://github.com/chef/omnibus/pull/1062) ([jeremiahsnapp](https://github.com/jeremiahsnapp))
+
 ## [8.2.2](https://github.com/chef/omnibus/tree/8.2.2) (2021-09-28)
 
 #### Merged Pull Requests
@@ -21,7 +80,6 @@
 - Add new DSL for GO to builder [#1032](https://github.com/chef/omnibus/pull/1032) ([mimaslanka](https://github.com/mimaslanka))
 - Fix pathing for go on windows [#1034](https://github.com/chef/omnibus/pull/1034) ([mimaslanka](https://github.com/mimaslanka))
 - Fixes for omnibus for ruby-3.0 [#1038](https://github.com/chef/omnibus/pull/1038) ([lamont-granquist](https://github.com/lamont-granquist))
-<!-- latest_stable_release -->
 
 ## [8.1.15](https://github.com/chef/omnibus/tree/8.1.15) (2021-08-02)
 

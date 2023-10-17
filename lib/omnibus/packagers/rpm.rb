@@ -437,7 +437,7 @@ module Omnibus
           render_template(resource_path("rpmmacros.erb"),
             destination: "#{home}/.rpmmacros",
             variables: {
-              gpg_name: project.maintainer,
+              gpg_name: "Opscode Packages",
               gpg_path: "#{ENV["HOME"]}/.gnupg", # TODO: Make this configurable
             })
         end
@@ -448,7 +448,7 @@ module Omnibus
 
           # RHEL 8 has gpg-agent running so we can skip the expect script since the agent
           # takes care of the passphrase entering on the signing
-          if dist_tag != ".el8"
+          if dist_tag != ".el8" && dist_tag != ".el9"
             sign_cmd.prepend("#{signing_script} \"").concat("\"")
           end
 

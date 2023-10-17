@@ -20,23 +20,24 @@ Gem::Specification.new do |gem|
   gem.test_files = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_dependency "aws-sdk-s3",       "~> 1"
+  gem.add_dependency "aws-sdk-s3",       "~> 1.116.0"
   gem.add_dependency "chef-utils",       ">= 15.4"
   gem.add_dependency "chef-cleanroom",   "~> 1.0"
   gem.add_dependency "ffi-yajl",         "~> 2.2"
   gem.add_dependency "mixlib-shellout",  ">= 2.0", "< 4.0"
-  gem.add_dependency "ohai",             ">= 15", "< 17"
+  gem.add_dependency "ohai",             ">= 16", "< 19"
   gem.add_dependency "ruby-progressbar", "~> 1.7"
   gem.add_dependency "thor",             ">= 0.18", "< 2.0"
   gem.add_dependency "license_scout",    "~> 1.0"
   gem.add_dependency "contracts",        ">= 0.16.0", "< 0.17.0"
+  gem.add_dependency "rexml",            "~> 3.2"
 
   gem.add_dependency "mixlib-versioning"
   gem.add_dependency "pedump"
 
   gem.add_development_dependency "artifactory", "~> 3.0"
   gem.add_development_dependency "aruba",       "~> 2.0"
-  gem.add_development_dependency "chefstyle",   "= 1.7.5"
+  gem.add_development_dependency "chefstyle",   "= 2.2.2"
   gem.add_development_dependency "fauxhai-ng",  ">= 7.5"
   gem.add_development_dependency "rspec",       "~> 3.0"
   gem.add_development_dependency "rspec-json_expectations"

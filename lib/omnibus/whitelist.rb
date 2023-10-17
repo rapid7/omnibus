@@ -1,5 +1,5 @@
 
-# Copyright 2012-2020, Chef Software Inc.
+# Copyright:: Copyright (c) Chef Software Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,13 +49,20 @@ ARCH_WHITELIST_LIBS = [
 ].freeze
 
 AIX_WHITELIST_LIBS = [
+  /libc\.a/,
+  /libcfg\.a/,
+  /libcorcfg\.a/,
+  /libcrypt\.a/,
+  /libdl\.a/,
+  /liblvm\.a/,
+  /libodm\.a/,
+  /libperfstat\.a/,
   /libpthread\.a/,
   /libpthreads\.a/,
-  /libdl.a/,
   /librtl\.a/,
-  /libc\.a/,
-  /libcrypt\.a/,
+  /libsrc\.a/,
   /unix$/,
+  /libcrypto\.so/,
 ].freeze
 
 OMNIOS_WHITELIST_LIBS = [
@@ -82,11 +89,13 @@ OMNIOS_WHITELIST_LIBS = [
 SOLARIS_WHITELIST_LIBS = [
   /libaio\.so/,
   /libavl\.so/,
+  /libbsm\.so/,
   /libcrypt_[di]\.so/,
   /libcrypto.so/,
   /libcurses\.so/,
   /libdoor\.so/,
   /libgen\.so/,
+  /libinetutil\.so/,
   /libmd5\.so/,
   /libmd\.so/,
   /libmp\.so/,
@@ -96,9 +105,11 @@ SOLARIS_WHITELIST_LIBS = [
   /libsocket\.so/,
   /libssl.so/,
   /libthread.so/,
+  /libtsol\.so/,
   /libuutil\.so/,
   /libkstat\.so/,
   # solaris 11 libraries:
+  /libstdc\+\+\.so/,
   /libc\.so\.1/,
   /libm\.so\.2/,
   /libdl\.so\.1/,
@@ -167,6 +178,8 @@ MAC_WHITELIST_LIBS = [
 
 FREEBSD_WHITELIST_LIBS = [
   /libc\.so/,
+  /libc\+\+\.so/,
+  /libcxxrt\.so/,
   /libgcc_s\.so/,
   /libcrypt\.so/,
   /libm\.so/,
@@ -177,28 +190,34 @@ FREEBSD_WHITELIST_LIBS = [
   /libkvm\.so/,
   /libprocstat\.so/,
   /libmd\.so/,
+  /libdl\.so/,
 ].freeze
 
 IGNORED_ENDINGS = %w{
   .TXT
-  .[ch]
-  .[ch]pp
-  .[eh]rl
   .app
   .appup
   .bat
   .beam
+  .c
   .cc
   .cmake
   .conf
+  .cpp
   .css
-  .e*rb
+  .erb
+  .erl
   .feature
   .gemspec
   .gif
   .gitignore
   .gitkeep
-  .h*h
+  .h
+  .h
+  .hh
+  .hpp
+  .hrl
+  .html
   .jar
   .java
   .jpg
@@ -210,6 +229,7 @@ IGNORED_ENDINGS = %w{
   .lua
   .md
   .mkd
+  .mo
   .npmignore
   .out
   .packlist
@@ -219,21 +239,28 @@ IGNORED_ENDINGS = %w{
   .png
   .pod
   .properties
-  .py[oc]*
-  .r*html
+  .py
+  .pyc
+  .pyo
   .rake
+  .rb
+  .rbs
   .rdoc
+  .rhtml
   .ri
+  .rpm
   .rst
   .scss
   .sh
   .sql
   .svg
   .toml
+  .tt
   .ttf
   .txt
   .xml
   .yml
+  COPYING
   Gemfile
   LICENSE
   Makefile
@@ -243,7 +270,7 @@ IGNORED_ENDINGS = %w{
   license
 }.freeze
 
-IGNORED_PATTERNS = %w{
+IGNORED_SUBSTRINGS = %w{
   /build_info/
   /licenses/
   /LICENSES/
