@@ -29,13 +29,26 @@ module Omnibus
 
     context "on mac_os_x" do
       before do
-        stub_ohai(platform: "mac_os_x", version: "10.13")
+        stub_ohai(platform: "mac_os_x", version: "10.14")
+      end
+
+      # file_list just needs to have one file which is inside of the install_dir
+      let(:file_list) do
+        double("Mixlib::Shellout",
+          error!: false,
+          error?: false,
+          stdout: <<~EOH
+            /opt/chefdk/shouldnt/matter
+          EOH
+        )
       end
 
       let(:absolute_links) do
         double("Mixlib::Shellout",
+          error!: false,
+          error?: false,
           stdout: <<~EOH
-            /opt/chefdk/embedded/bin/ruby:
+            /opt/chefdk/shouldnt/matter:
               /System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 57337.60.9)
               /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1259.32.0)
               /opt/chefdk/embedded/lib/libruby.2.6.dylib (compatibility version 2.6.0, current version 2.6.6)
@@ -48,8 +61,10 @@ module Omnibus
 
       let(:portable_links) do
         double("Mixlib::Shellout",
+          error!: false,
+          error?: false,
           stdout: <<~EOH
-          /opt/chefdk/embedded/bin/ruby:
+          /opt/chefdk/shouldnt/matter:
             /System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 57337.60.9)
             /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1259.32.0)
             @executable_path/../lib/libruby.2.6.dylib (compatibility version 2.6.0, current version 2.6.6)
@@ -62,8 +77,10 @@ module Omnibus
 
       let(:unknown_absolute_link) do
         double("Mixlib::Shellout",
+          error!: false,
+          error?: false,
           stdout: <<~EOH
-          /opt/chefdk/embedded/bin/ruby:
+          /opt/chefdk/shouldnt/matter:
             /System/Library/Frameworks/Security.framework/Versions/A/Security (compatibility version 1.0.0, current version 57337.60.9)
             /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 1259.32.0)
             /opt/chefdk/embedded/lib/libruby.2.6.dylib (compatibility version 2.6.0, current version 2.6.6)
@@ -80,7 +97,11 @@ module Omnibus
 
         it "raises an exception when there are absolute links" do
           allow(subject).to receive(:shellout)
-            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$'")
+            .and_return(file_list)
+
+          allow(subject).to receive(:shellout)
+            .with("xargs otool -L", { input: "/opt/chefdk/shouldnt/matter\n" })
             .and_return(absolute_links)
 
           expect { subject.run! }.to raise_error(HealthCheckFailed)
@@ -88,16 +109,24 @@ module Omnibus
 
         it "does not raise an exception when links are portable" do
           allow(subject).to receive(:shellout)
-          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
-          .and_return(portable_links)
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$'")
+            .and_return(file_list)
+
+          allow(subject).to receive(:shellout)
+            .with("xargs otool -L", { input: "/opt/chefdk/shouldnt/matter\n" })
+            .and_return(portable_links)
 
           expect { subject.run! }.to_not raise_error
         end
 
         it "raises an exception when there are unknown absolute links" do
           allow(subject).to receive(:shellout)
-          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
-          .and_return(unknown_absolute_link)
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$'")
+            .and_return(file_list)
+
+          allow(subject).to receive(:shellout)
+            .with("xargs otool -L", { input: "/opt/chefdk/shouldnt/matter\n" })
+            .and_return(unknown_absolute_link)
 
           expect { subject.run! }.to raise_error(HealthCheckFailed)
         end
@@ -108,24 +137,37 @@ module Omnibus
 
         it "does not raise an exception when there are absolute links" do
           allow(subject).to receive(:shellout)
-            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$'")
+            .and_return(file_list)
+
+          allow(subject).to receive(:shellout)
+            .with("xargs otool -L", { input: "/opt/chefdk/shouldnt/matter\n" })
             .and_return(absolute_links)
+
 
           expect { subject.run! }.to_not raise_error
         end
 
         it "raises an exception when links are portable" do
           allow(subject).to receive(:shellout)
-          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
-          .and_return(portable_links)
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$'")
+            .and_return(file_list)
+
+          allow(subject).to receive(:shellout)
+            .with("xargs otool -L", { input: "/opt/chefdk/shouldnt/matter\n" })
+            .and_return(portable_links)
 
           expect { subject.run! }.to raise_error(HealthCheckFailed)
         end
 
         it "raises an exception when there are unknown absolute links" do
           allow(subject).to receive(:shellout)
-          .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$' | xargs otool -L")
-          .and_return(unknown_absolute_link)
+            .with("find #{project.install_dir}/ -type f | egrep '\.(dylib|bundle)$'")
+            .and_return(file_list)
+
+          allow(subject).to receive(:shellout)
+            .with("xargs otool -L", { input: "/opt/chefdk/shouldnt/matter\n" })
+            .and_return(unknown_absolute_link)
 
           expect { subject.run! }.to raise_error(HealthCheckFailed)
         end
@@ -211,8 +253,20 @@ module Omnibus
       let(:file_list) do
         double("Mixlib::Shellout",
           error!: false,
+          error?: false,
           stdout: <<~EOH
             /opt/chefdk/shouldnt/matter
+          EOH
+        )
+      end
+
+      let(:file_list_multiple) do
+        double("Mixlib::Shellout",
+          error!: false,
+          error?: false,
+          stdout: <<~EOH
+            /opt/chefdk/first
+            /opt/chefdk/second
           EOH
         )
       end
@@ -220,6 +274,7 @@ module Omnibus
       let(:empty_list) do
         double("Mixlib::Shellout",
           error!: false,
+          error?: false,
           stdout: <<~EOH
           EOH
         )
@@ -238,6 +293,7 @@ module Omnibus
       let(:bad_list) do
         double("Mixlib::Shellout",
           error!: false,
+          error?: false,
           stdout: <<~EOH
             /somewhere/other/than/install/dir
           EOH
@@ -247,6 +303,7 @@ module Omnibus
       let(:bad_healthcheck) do
         double("Mixlib::Shellout",
           error!: false,
+          error?: false,
           stdout: <<~EOH
             /bin/ls:
               linux-vdso.so.1 =>  (0x00007fff583ff000)
@@ -269,6 +326,7 @@ module Omnibus
       let(:good_healthcheck) do
         double("Mixlib::Shellout",
           error!: false,
+          error?: false,
           stdout: <<~EOH
             /bin/echo:
               linux-vdso.so.1 =>  (0x00007fff8a6ee000)
@@ -278,6 +336,17 @@ module Omnibus
               linux-vdso.so.1 =>  (0x00007fff095b3000)
               libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007fe868ec0000)
               /lib64/ld-linux-x86-64.so.2 (0x00007fe869252000)
+          EOH
+        )
+      end
+
+      let(:bad_exitstatus_healthcheck) do
+        double("Mixlib::Shellout",
+          error!: -> { raise Mixlib::ShellOut::ShellCommandFailed },
+          error?: true,
+          exitstatus: 135,
+          stdout: <<~EOH
+            /bin/echo:
           EOH
         )
       end
@@ -304,6 +373,33 @@ module Omnibus
           .and_return(good_healthcheck)
 
         expect { subject.run! }.to_not raise_error
+      end
+
+      it "does not raise an exception if the initial batch ldd lookup fails" do
+        allow(subject).to receive(:shellout)
+          .with("find /opt/chefdk/ -type f | xargs file | grep \"ELF\" | awk -F: '{print $1}' | sed -e 's/:$//'")
+          .and_return(file_list_multiple)
+
+        # Bulk ldd command fails
+        allow(subject).to receive(:shellout)
+          .with("xargs ldd", { input: "/opt/chefdk/first\n/opt/chefdk/second\n" })
+          .and_return(bad_exitstatus_healthcheck)
+
+        # First file ldd fails
+        allow(subject).to receive(:shellout)
+          .with("xargs ldd", { input: "/opt/chefdk/first\n" })
+          .and_return(bad_exitstatus_healthcheck)
+
+        # Second file lld succeeds
+        allow(subject).to receive(:shellout)
+          .with("xargs ldd", { input: "/opt/chefdk/second\n" })
+          .and_return(good_healthcheck)
+
+        output = capture_logging do
+          expect { subject.run! }.to_not raise_error
+        end
+        expect(output).to match(%r{Failed running xargs ldd with exit status 135 when resolving individually})
+        expect(output).to match(%r{Failed running xargs ldd with exit status 135 against: /opt/chefdk/first})
       end
 
       it "will not perform dll base relocation checks" do
